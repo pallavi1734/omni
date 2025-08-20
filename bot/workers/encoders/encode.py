@@ -40,13 +40,7 @@ class Encoder:
         try:
             self.req_clean = True
             code(self.process, dl, en, user, stime, self.enc_id)
-            
-            # --- Corrected string replacement logic ---
-            # Apply all replacements in a single, chained operation on the original string.
-            cleaned_en = en.replace("%20", " ").replace("%5D", "]").replace("%5B", "[")
-            out = (os.path.split(cleaned_en))[1]
-            # ----------------------------------
-
+            out = (os.path.split(en))[1]
             wah = 0
             a_msg = (
                 f"**{ejob.get_pending_pos()} Job**\n└`{(await get_codec(ejob.pending()))}`\n\n"
@@ -89,6 +83,10 @@ class Encoder:
         action = "game" if conf.ALLOW_ACTION is True else "cancel"
         async with self.client.action(self.event.chat_id, action):
             com = await self.process.communicate()
+            # while True:
+            # if not await is_running(self.process):
+            # break
+            # await asyncio.sleep(5)
         if self.req_clean:
             decode(self.enc_id, pop=True)
             if self.log_enc_id:
