@@ -41,8 +41,8 @@ class Encoder:
             self.req_clean = True
             code(self.process, dl, en, user, stime, self.enc_id)
             
-            # --- Added string replacement logic here ---
-            # Remove specific URL-encoded characters.
+            # --- Corrected string replacement logic ---
+            # Apply all replacements in a single, chained operation on the original string.
             cleaned_en = en.replace("%20", " ").replace("%5D", "]").replace("%5B", "[")
             out = (os.path.split(cleaned_en))[1]
             # ----------------------------------
