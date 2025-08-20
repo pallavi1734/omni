@@ -1,5 +1,6 @@
 import asyncio
 import os
+from urllib.parse import unquote  # Added this import
 
 from bot import Button
 from bot.config import conf
@@ -40,7 +41,10 @@ class Encoder:
         try:
             self.req_clean = True
             code(self.process, dl, en, user, stime, self.enc_id)
-            out = (os.path.split(en))[1]
+
+            # Decode the filename to remove URL encoding (%20)
+            decoded_filename = unquote(os.path.split(en)[1])
+
             wah = 0
             a_msg = (
                 f"**{ejob.get_pending_pos()} Job**\n└`{(await get_codec(ejob.pending()))}`\n\n"
@@ -54,7 +58,7 @@ class Encoder:
                 else None
             )
             e_msg = await event.edit(
-                text.format(enmoji(), out, a_msg),
+                text.format(enmoji(), decoded_filename, a_msg),
                 buttons=[
                     [Button.inline("ℹ️", data=f"pres{wah}")],
                     [
@@ -68,7 +72,7 @@ class Encoder:
                 code(self.process, dl, en, user, stime, self.log_enc_id)
                 sau = (os.path.split(dl))[1]
                 e_log = await self.log_msg.edit(
-                    f"**User:**\n└[{self.sender.first_name}](tg://user?id={user})\n\n{a_msg}**Currently Encoding:**\n└`{out}`\n\n**Source File:**\n└`{sau}`",
+                    f"**User:**\n└[{self.sender.first_name}](tg://user?id={user})\n\n{a_msg}**Currently Encoding:**\n└`{decoded_filename}`\n\n**Source File:**\n└`{sau}`",
                     buttons=[
                         [Button.inline("ℹ️", data=f"pres{wah}")],
                         [Button.inline("CHECK PROGRESS", data=f"stats2")],
@@ -83,10 +87,6 @@ class Encoder:
         action = "game" if conf.ALLOW_ACTION is True else "cancel"
         async with self.client.action(self.event.chat_id, action):
             com = await self.process.communicate()
-            # while True:
-            # if not await is_running(self.process):
-            # break
-            # await asyncio.sleep(5)
         if self.req_clean:
             decode(self.enc_id, pop=True)
             if self.log_enc_id:
