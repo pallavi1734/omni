@@ -1,6 +1,6 @@
 import asyncio
 import os
-from urllib.parse import unquote  # Added this import
+from urllib.parse import unquote
 
 from bot import Button
 from bot.config import conf
@@ -42,8 +42,8 @@ class Encoder:
             self.req_clean = True
             code(self.process, dl, en, user, stime, self.enc_id)
 
-            # Decode the filename to remove URL encoding (%20)
-            decoded_filename = unquote(os.path.split(en)[1])
+            # Use the original downloaded filename for display to the user
+            decoded_filename = unquote(os.path.split(dl)[1])
 
             wah = 0
             a_msg = (
