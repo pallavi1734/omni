@@ -1,6 +1,5 @@
 import asyncio
 import os
-import urllib.parse  # Import the urllib.parse library
 
 from bot import Button
 from bot.config import conf
@@ -42,10 +41,10 @@ class Encoder:
             self.req_clean = True
             code(self.process, dl, en, user, stime, self.enc_id)
             
-            # --- Added decoding logic here ---
-            # URL-decode the filename to handle characters like %20, %5B, etc.
-            decoded_en = urllib.parse.unquote(en)
-            out = (os.path.split(decoded_en))[1]
+            # --- Added string replacement logic here ---
+            # Remove specific URL-encoded characters.
+            cleaned_en = en.replace("%20", " ").replace("%5D", "]").replace("%5B", "[")
+            out = (os.path.split(cleaned_en))[1]
             # ----------------------------------
 
             wah = 0
