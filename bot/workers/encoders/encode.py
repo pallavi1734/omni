@@ -1,6 +1,6 @@
 import asyncio
 import os
-from urllib.parse import unquote
+from urllib.parse import unquote # This is the key to removing the % signs
 
 from bot import Button
 from bot.config import conf
@@ -42,8 +42,8 @@ class Encoder:
             self.req_clean = True
             code(self.process, dl, en, user, stime, self.enc_id)
 
-            # Use the original downloaded filename for display to the user
-            decoded_filename = unquote(os.path.split(dl)[1])
+            # This line decodes the filename to remove the % signs
+            decoded_filename = unquote(os.path.split(en)[1])
 
             wah = 0
             a_msg = (
