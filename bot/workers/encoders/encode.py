@@ -1,6 +1,6 @@
 import asyncio
 import os
-from urllib.parse import unquote # Added this import to handle URL decoding
+import urllib.parse  # Import the urllib.parse library
 
 from bot import Button
 from bot.config import conf
@@ -42,8 +42,11 @@ class Encoder:
             self.req_clean = True
             code(self.process, dl, en, user, stime, self.enc_id)
             
-            # This line decodes the filename to remove the % symbols.
-            out = unquote(os.path.split(en)[1])
+            # --- Added decoding logic here ---
+            # URL-decode the filename to handle characters like %20, %5B, etc.
+            decoded_en = urllib.parse.unquote(en)
+            out = (os.path.split(decoded_en))[1]
+            # ----------------------------------
 
             wah = 0
             a_msg = (
@@ -70,7 +73,7 @@ class Encoder:
             )
             if self.log_msg and self.sender:
                 code(self.process, dl, en, user, stime, self.log_enc_id)
-                sau = unquote(os.path.split(dl)[1]) # Apply unquote here as well for the source file name
+                sau = (os.path.split(dl))[1]
                 e_log = await self.log_msg.edit(
                     f"**User:**\n└[{self.sender.first_name}](tg://user?id={user})\n\n{a_msg}**Currently Encoding:**\n└`{out}`\n\n**Source File:**\n└`{sau}`",
                     buttons=[
@@ -87,10 +90,6 @@ class Encoder:
         action = "game" if conf.ALLOW_ACTION is True else "cancel"
         async with self.client.action(self.event.chat_id, action):
             com = await self.process.communicate()
-            # while True:
-            # if not await is_running(self.process):
-            # break
-            # await asyncio.sleep(5)
         if self.req_clean:
             decode(self.enc_id, pop=True)
             if self.log_enc_id:
